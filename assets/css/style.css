@@ -1,0 +1,351 @@
+/* ==========================================================================
+   Design tokens
+   Warm paper palette, system serif typography, celeste accent.
+   System fonts only (no external font files).
+   ========================================================================== */
+:root {
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+
+  /* ink: primary text, body text, captions (warm brown-grays) */
+  --ink-light: #2a2118;   --ink-dark: #eaf0eb;
+  --ink-2-light: #4d4235; --ink-2-dark: #c4cbc5;
+  --ink-3-light: #6e6150; --ink-3-dark: #9aa39c;
+  /* surfaces: cream paper in light mode, green-tinted black in dark mode */
+  --paper-light: #faf6ee; --paper-dark: #121614;
+  --rule-light: #e6dfd0;  --rule-dark: #29302b;
+  /* single accent: celeste, the sky blue of the Argentine flag */
+  --accent-light: #1f78b4; --accent-dark: #74c0f0;
+  --accent-soft-light: #d9ebf7; --accent-soft-dark: #1b3543;
+
+  color-scheme: light dark;
+  --ink: light-dark(var(--ink-light), var(--ink-dark));
+  --ink-2: light-dark(var(--ink-2-light), var(--ink-2-dark));
+  --ink-3: light-dark(var(--ink-3-light), var(--ink-3-dark));
+  --paper: light-dark(var(--paper-light), var(--paper-dark));
+  --rule: light-dark(var(--rule-light), var(--rule-dark));
+  --accent: light-dark(var(--accent-light), var(--accent-dark));
+  --accent-soft: light-dark(var(--accent-soft-light), var(--accent-soft-dark));
+
+  --content-width: 760px;
+  --photo-width: 250px;
+  --photo-height: 300px;
+  /* Photo framing (the photo file has the same 5:6 shape as the frame):
+     --photo-zoom: 1 = whole photo visible, 3 = three times closer
+     --photo-x / --photo-y: point of the photo placed at the frame center,
+     as a fraction (0 = left/top edge, 1 = right/bottom edge) */
+  --photo-zoom: 1.65;
+  --photo-x: 0.405;
+  --photo-y: 0.408;
+}
+
+/* Manual theme choice (set by main.js) overrides the system setting */
+html[data-theme="light"] { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; }
+
+html { font-size: 18px; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  line-height: 1.65;
+}
+
+.page {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 2.25rem 1.4rem 3rem;
+}
+
+p, li { color: var(--ink-2); }
+p { margin: 0 0 1rem; }
+strong { color: var(--ink); }
+
+a {
+  color: var(--ink);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection { background: var(--accent-soft); }
+
+/* ---------- Header: name, italic tagline, theme toggle ---------- */
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.site-title {
+  margin: 0;
+  font-size: 2.3rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.site-title a { text-decoration: none; }
+
+.tagline {
+  margin: 0.35rem 0 0;
+  font-style: italic;
+  color: var(--ink-3);
+}
+
+.theme-toggle {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 99px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-3);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+.theme-toggle svg { width: 17px; height: 17px; }
+
+/* Show the icon of the theme the click will switch to */
+.theme-toggle[data-mode="light"] .icon-sun,
+.theme-toggle[data-mode="dark"] .icon-moon { display: none; }
+
+/* ---------- Nav: small caps, plain words ---------- */
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 1.5rem;
+  margin: 1.25rem 0 2.5rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.8rem;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.12em;
+}
+
+.site-nav a { color: var(--ink-3); text-decoration: none; }
+.site-nav a:hover { color: var(--accent); }
+.site-nav a[aria-current="page"] { color: var(--ink); border-bottom: 2px solid var(--accent); }
+
+/* ---------- Home: photo left, bio right ---------- */
+.home-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 2.5rem 3rem;
+}
+
+.home-portrait { flex: 0 0 var(--photo-width); }
+
+/* Rounded rectangle with an offset celeste block behind it */
+.photo-frame {
+  position: relative;
+  width: var(--photo-width);
+  height: var(--photo-height);
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 10px 10px 0 var(--accent-soft);
+}
+
+/* The photo is scaled by --photo-zoom and shifted so that the point
+   (--photo-x, --photo-y) of the image sits at the center of the frame */
+.photo-frame img {
+  position: absolute;
+  width: calc(var(--photo-zoom) * 100%);
+  height: auto;
+  left: calc(50% - var(--photo-x) * var(--photo-zoom) * 100%);
+  top: calc(50% - var(--photo-y) * var(--photo-zoom) * 100%);
+  max-width: none;
+}
+
+.home-social {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.75rem;
+}
+
+.home-social a { color: var(--ink-3); line-height: 0; }
+.home-social a:hover { color: var(--accent); }
+.home-social svg { width: 24px; height: 24px; }
+
+/* Link whose URL has not been provided yet */
+.home-social a.todo { opacity: 0.45; }
+
+.home-bio { flex: 1; min-width: 300px; }
+.home-bio p:first-child { margin-top: 0; }
+
+.home-bio ul { margin: 0 0 1rem; padding-left: 1.25rem; }
+.home-bio li { margin-bottom: 0.5rem; }
+.home-bio li::marker { color: var(--accent); }
+
+/* ---------- Section headings: short celeste rule underneath ---------- */
+h2 {
+  margin: 3rem 0 1.1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+h2::after {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  margin-top: 0.4rem;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* ---------- News: date column on the left, achievement on the right ---------- */
+.news { list-style: none; margin: 0; padding: 0; }
+
+.news li {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 1rem;
+  margin: 0 0 0.9rem;
+}
+
+.news time {
+  padding-top: 0.2rem;
+  font-size: 0.8rem;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* ---------- Projects: link with a one-line description below ---------- */
+.projects { list-style: none; margin: 0; padding: 0; }
+
+.projects li { margin: 0 0 2.25rem; }
+
+.projects li a,
+.projects li strong { font-weight: 600; }
+.projects li span { display: block; }
+
+/* ---------- Dated entry (projects, publications): date left, content right ---------- */
+.entry {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 1rem;
+}
+
+.entry time {
+  padding-top: 0.2rem;
+  font-size: 0.8rem;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* Image under the date; the PNG has a transparent background */
+.entry-side time { display: block; }
+.entry-side img {
+  display: block;
+  width: 100%;
+  max-width: 7.5rem;
+  height: auto;
+  margin-top: 0.5rem;
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+
+/* Grow slightly on hover, from the center in all directions. Kept small so
+   the extra width (split left and right) stays within the 1rem gap and never
+   covers the text next to it */
+.entry-side img:hover { transform: scale(1.15); }
+
+@media (prefers-reduced-motion: reduce) {
+  .entry-side img { transition: none; }
+}
+
+/* ---------- Publications / thesis ---------- */
+.pub-kind {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 400;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+}
+
+.thesis-title { margin-bottom: 0.25rem; font-weight: 600; color: var(--ink); }
+.thesis-meta { color: var(--ink-3); font-size: 0.95rem; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 0.85rem;
+  line-height: 1;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover { background: var(--accent-soft); color: var(--ink); }
+
+.thesis-note { margin: 0.75rem 0 0; color: var(--ink-3); font-size: 0.9rem; font-style: italic; }
+
+/* First heading on a sub-page: no extra top space */
+.page-heading { margin-top: 0; }
+
+/* ---------- Footer ---------- */
+footer {
+  margin-top: 3.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+
+footer p { margin: 0; color: inherit; }
+
+/* ---------- Small screens: center photo above bio ---------- */
+@media (max-width: 640px) {
+  :root {
+    --photo-width: 200px;
+    --photo-height: 240px;
+  }
+
+  .home-portrait {
+    flex-basis: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .site-title { font-size: 1.8rem; }
+
+  /* Narrow screens: date above the text */
+  .news li,
+  .entry { grid-template-columns: 1fr; gap: 0; }
+}
