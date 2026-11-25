@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <circle cx="32" cy="32" r="32" fill="#6b7a2e"/>
-  <text x="32" y="46" text-anchor="middle" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="38" font-weight="400" fill="#faf6ee">FM</text>
+  <style>
+    text { fill: #55641f; }
+    @media (prefers-color-scheme: dark) { text { fill: #b4c566; } }
+  </style>
+  <text x="32" y="50" text-anchor="middle" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="400" textLength="62" lengthAdjust="spacingAndGlyphs">FM</text>
 </svg>
